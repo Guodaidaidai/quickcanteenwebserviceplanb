@@ -3,10 +3,14 @@ package com.quickcanteen.controller.api;
 import com.quickcanteen.annotation.Authentication;
 import com.quickcanteen.dto.BaseBean;
 import com.quickcanteen.dto.BaseJson;
+import com.quickcanteen.dto.CompanyInfoBean;
 import com.quickcanteen.dto.Role;
+import com.quickcanteen.dto.UserInfoBean;
 import com.quickcanteen.mapper.UserInfoMapper;
+import com.quickcanteen.model.CompanyInfo;
 import com.quickcanteen.model.UserInfo;
 import com.quickcanteen.service.TokenService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,11 +56,11 @@ public class UserController extends APIBaseController {
         UserInfo userInfo = userInfoMapper.selectByPrimaryKey(userID);
         switch (getToken().getRole()) {
             case Admin:
-                baseJson.setObj(userInfo);
+                baseJson.setObj(parse(userInfo));
                 break;
             case User:
                 if (getToken().getId() == userID) {
-                    baseJson.setObj(userInfo);
+                    baseJson.setObj(parse(userInfo));
                 } else {
                     return getUnauthorizedResult();
                 }
@@ -66,5 +70,21 @@ public class UserController extends APIBaseController {
         }
         baseJson.setReturnCode("4.0");
         return baseJson;
+    }
+
+    private CompanyInfoBean parse(CompanyInfo companyInfo){
+        CompanyInfoBean result=new CompanyInfoBean();
+        BeanUtils.copyProperties(companyInfo,result);
+        return result;
+    }
+
+    private UserInfoBean parse(UserInfo userInfo) {
+        UserInfoBean userInfoBean = new UserInfoBean();
+        try {
+            BeanUtils.copyProperties(userInfo,userInfoBean);
+        } catch (Exception e) {
+
+        }
+        return userInfoBean;
     }
 }
