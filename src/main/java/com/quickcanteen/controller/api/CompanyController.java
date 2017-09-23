@@ -2,6 +2,7 @@ package com.quickcanteen.controller.api;
 
 import com.quickcanteen.annotation.Authentication;
 import com.quickcanteen.dto.BaseJson;
+import com.quickcanteen.dto.DishesBean;
 import com.quickcanteen.dto.TypeBean;
 import com.quickcanteen.mapper.CompanyInfoMapper;
 import com.quickcanteen.mapper.DishesMapper;
@@ -31,7 +32,7 @@ public class CompanyController extends APIBaseController {
     @Autowired
     private DishesMapper dishesMapper;
 
-    @RequestMapping(value = "/getOrderById")
+    @RequestMapping(value = "/getCompanyInfoById")
     @Authentication
     public BaseJson getCompanyInfoById(@RequestParam("companyID") Integer companyID) {
         BaseJson baseJson = new BaseJson();
@@ -48,7 +49,7 @@ public class CompanyController extends APIBaseController {
     @Authentication
     public BaseJson getTypesAndDishesByCompanyId(@RequestParam("companyID") Integer companyID) {
         BaseJson baseJson = new BaseJson();
-        List<TypeBean> typeBeans = typeMapper.selectByCompangyId(companyID).stream().map(this::parse).collect(Collectors.toList());
+        List<TypeBean> typeBeans = typeMapper.selectByCompanyId(companyID).stream().map(this::parse).collect(Collectors.toList());
         baseJson.setObj(typeBeans);
         baseJson.setReturnCode("");
         return baseJson;
@@ -58,7 +59,7 @@ public class CompanyController extends APIBaseController {
         TypeBean typeBean = new TypeBean();
         try {
             BeanUtils.copyProperties(typeBean, type);
-            typeBean.setDishesBeans(dishesMapper.selectByTypeId(type.getTypeId()));
+            typeBean.setDishesBeanList(dishesMapper.selectByTypeId(type.getTypeId()));
         } catch (Exception e) {
 
         }

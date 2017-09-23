@@ -83,12 +83,37 @@ public interface DishesMapper {
     List<DishesBean> selectByOrderId(Integer orderId);
 
     @Select({
-            "select *",
+            "select *,'0' as count ",
             "from dishes natural join dishes_type",
             "where type_id = #{typeId,jdbcType=INTEGER}"
     })
-    @ResultMap("ResultMapWithBLOBs")
+    @ResultType(com.quickcanteen.dto.DishesBean.class)
     List<DishesBean> selectByTypeId(Integer typeId);
 
     Integer checkDishesInCompany(@Param("dishesIds")List<Integer> dishesIds);
+
+    @Select({"<script>",
+            "select *",
+            "from dishes ",
+            "<if test = \"keyword != null and keyword != ''\">where dishes_name like CONCAT('%',#{keyword},'%')</if>",
+            "</script>"
+    })
+    @ResultMap("ResultMapWithBLOBs")
+    List<Dishes> searchDishes(@Param("keyword") String keyword);
+
+    @Select({
+            "select dishes.* ",
+            "from dishes ",
+            "where dishes_id in (select distinct(dishes_id) from `order` natural join order_dishes where user_id = 1)"
+    })
+    @ResultMap("BaseResultMap")
+    List<Dishes> getDishesByUserId(int userId);
+
+    @Select({
+            "select dishes.* ",
+            "from dishes natural join collect_dishes ",
+            "where collector_id = #{userId}"
+    })
+    @ResultMap("BaseResultMap")
+    List<Dishes> getCollectDishesListByUserId(int userId);
 }
