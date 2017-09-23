@@ -100,4 +100,20 @@ public interface DishesMapper {
     })
     @ResultMap("ResultMapWithBLOBs")
     List<Dishes> searchDishes(@Param("keyword") String keyword);
+
+    @Select({
+            "select dishes.* ",
+            "from dishes ",
+            "where dishes_id in (select distinct(dishes_id) from `order` natural join order_dishes where user_id = 1)"
+    })
+    @ResultMap("BaseResultMap")
+    List<Dishes> getDishesByUserId(int userId);
+
+    @Select({
+            "select dishes.* ",
+            "from dishes natural join collect_dishes ",
+            "where collector_id = #{userId}"
+    })
+    @ResultMap("BaseResultMap")
+    List<Dishes> getCollectDishesListByUserId(int userId);
 }
