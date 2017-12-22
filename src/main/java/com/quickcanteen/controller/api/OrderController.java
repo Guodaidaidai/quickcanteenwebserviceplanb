@@ -294,7 +294,8 @@ public class OrderController extends APIBaseController {
     public BaseJson getNeedDeliverOrdersByPage(@RequestParam("pageNumber") Integer pageNumber,
                                                @RequestParam("pageSize") Integer pageSize) {
         BaseJson baseJson = new BaseJson();
-        List<Order> orders = orderMapper.selectNeedDeliver(new RowBounds(pageNumber * pageSize, pageSize));
+        int userId = getToken().getId();
+        List<Order> orders = orderMapper.selectNeedDeliver(getToken().getId(),new RowBounds(pageNumber * pageSize, pageSize));
         List<OrderBean> orderBeans = orders.stream().map(this::parse).collect(Collectors.toList());
         switch (getToken().getRole()) {
             case User:
@@ -395,7 +396,7 @@ public class OrderController extends APIBaseController {
             orderBean.setDishesBeanList(dishesBeanList.size() == 0 ? null : dishesBeanList);
             Location location = locationMapper.selectByPrimaryKey(order.getLocationId());
             orderBean.setLocationBean(location == null ? new LocationBean() : parse(location));
-            UserInfo userInfo = userInfoMapper.selectByPrimaryKey(getToken().getId());
+            UserInfo userInfo = userInfoMapper.selectByPrimaryKey(order.getUserId());
             orderBean.setUserRealName(userInfo.getRealName() == null ? "" : userInfo.getRealName());
             orderBean.setUserTelephone(userInfo.getTelephone() == null ? "" : userInfo.getTelephone());
         } catch (NullPointerException np) {

@@ -128,10 +128,10 @@ public interface OrderMapper {
     @Select({
             "select * ",
             "from `order`",
-            "where order_status = 110 and deliver_man_id = 0 order by publish_time desc"
+            "where order_status = 110 and deliver_man_id = 0 and user_id != #{userId} order by publish_time desc"
     })
     @ResultMap("BaseResultMap")
-    List<Order> selectNeedDeliver(RowBounds rowBounds);
+    List<Order> selectNeedDeliver(@Param("userId") Integer userId,RowBounds rowBounds);
 
     @Select({
             "select * ",
