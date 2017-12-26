@@ -250,6 +250,7 @@ public class WebCompanyController extends BaseController {
         OrderVo result = new OrderVo();
         BeanUtils.copyProperties(order, result);
         result.setUserName(userInfoMapper.selectByPrimaryKey(order.getUserId()).getRealName());
+        result.setCompanyName(companyInfoMapper.selectByPrimaryKey(order.getCompanyId()).getCompanyName());
         List<Dishes> dishesList = dishesMapper.selectDishesByOrderId(result.getOrderId());
         List<DishesVo> dishesVos = dishesList.stream().map(this::parse).collect(Collectors.toList());
         for(DishesVo dishesVo :dishesVos){
@@ -257,6 +258,8 @@ public class WebCompanyController extends BaseController {
             dishesVo.setCount(orderDishesMapper.selectByPrimaryKey(orderDishesKey).getCount());
         }
         result.setDishesVos(dishesVos);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        result.setPublishTimeStr(sdf.format(order.getPublishTime()));
         return result;
     }
 

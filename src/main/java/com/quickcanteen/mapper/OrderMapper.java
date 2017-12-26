@@ -120,6 +120,14 @@ public interface OrderMapper {
     @Select({
             "select * ",
             "from `order`",
+            "where user_id = #{userId} and order_status = #{status} order by publish_time desc"
+    })
+    @ResultMap("BaseResultMap")
+    List<Order> selectByOrderStatusAndUserId(@Param("userId") Integer userId, @Param("status") Integer status, RowBounds rowBounds);
+
+    @Select({
+            "select * ",
+            "from `order`",
             "where company_id = #{companyId} order by publish_time desc"
     })
     @ResultMap("BaseResultMap")

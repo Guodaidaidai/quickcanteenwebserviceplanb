@@ -19,6 +19,8 @@ public class OrderVo {
 
     private Date publishTime;
 
+    private String publishTimeStr;
+
     private Date completeTime;
 
     private Double totalPrice;
@@ -26,6 +28,8 @@ public class OrderVo {
     private Integer timeslotId;
 
     private String userName;
+
+    private String companyName;
 
     private List<DishesVo> dishesVos;
 
